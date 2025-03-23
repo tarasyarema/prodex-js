@@ -20,7 +20,7 @@ https://github.com/user-attachments/assets/5fc85e16-0a18-4b97-aa6c-e18e6767a407
 To use, add the following to the head of your HTML file:
 
 ```html
-<script name="prodex" src="http://cdn.jsdelivr.net/gh/tarasyarema/prodex-js@v0.1.2/core.min.js?k=test"></script>
+<script name="prodex" src="http://cdn.jsdelivr.net/gh/tarasyarema/prodex-js@v0.1.3/core.min.js?k=test"></script>
 ```
 
 if you set the `k` the magic components will be loaded, if you do not set it the magic components will not load (e.g. for production builds).
