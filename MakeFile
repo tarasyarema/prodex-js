@@ -1,0 +1,2 @@
+minify:
+    npm exec minify core.js > core.min.js
