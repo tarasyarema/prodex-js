@@ -4,6 +4,9 @@ let globalIsCapturing = false;
 let globalBoxes = [];
 let globalTooltips = [];
 
+var socket = null;
+
+// const WS_ENDPOINT = 'http://localhost:8001/prodex';
 const WS_ENDPOINT = 'https://prodex-api.onrender.com/prodex';
 
 const SERVER_RECONNECT_INTERVAL = 5_000;
@@ -64,12 +67,13 @@ const PRODEX_STYLES = `
   position: absolute;
   border: 1px solid red;
   border-radius: 4px;
-  background-color: rgba(255, 0, 0, 0);
+  background-color: rgba(255, 0, 0, 0.05);
   cursor: pointer;
   transition: background-color 0.2s, border 0.2s;
+  z-index: 99000;
 
   :hover {
-    background-color: rgba(255, 0, 0, 0.05);
+    background-color: rgba(255, 0, 0, 0.1);
     border: 2px solid red;
   }
 }
@@ -166,9 +170,11 @@ const setupControls = () => {
 
     if (!globalSelectorEnabled) {
       globalBoxes.forEach(b => b.remove());
+      document.querySelectorAll('.__prodex_box').forEach(b => b.remove());
       globalBoxes = [];
 
       globalTooltips.forEach(t => t.remove());
+      document.querySelectorAll('.__prodex_tooltip').forEach(t => t.remove());
       globalTooltips = [];
     }
   });
@@ -439,7 +445,12 @@ function addBox(name, width, height, top, left, className, cb) {
   box.style.left = left + 'px';
 
   box.addEventListener('click', function(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+
     globalBoxes.forEach(b => b.id !== box.id && b.remove());
+    document.querySelectorAll('.__prodex_box').forEach(b => b.id !== box.id && b.remove());
     globalBoxes = globalBoxes.filter(b => b.id === box.id);
 
     globalTooltips.forEach(t => t.remove());
@@ -484,14 +495,17 @@ function addBox(name, width, height, top, left, className, cb) {
 
         // Remove all tooltips
         globalBoxes.forEach(b => b.remove());
+        document.querySelectorAll('.__prodex_box').forEach(b => b.remove());
         globalBoxes = [];
 
         globalTooltips.forEach(t => t.remove());
+        document.querySelectorAll('.__prodex_tooltip').forEach(t => t.remove());
         globalTooltips = [];
       } else if (e.key === 'Escape') {
         e.preventDefault();
 
         globalTooltips.forEach(t => t.remove());
+        document.querySelectorAll('.__prodex_tooltip').forEach(t => t.remove());
         globalTooltips = [];
 
         div.remove();
@@ -513,6 +527,8 @@ function addBox(name, width, height, top, left, className, cb) {
     // Remove the box after 1 second
     setTimeout(function() {
       box.remove();
+
+      document.querySelectorAll('.__prodex_box').forEach(b => b.id !== box.id && b.remove());
       globalBoxes = globalBoxes.filter(b => b.id === box.id);
     }, 100);
   });
@@ -527,14 +543,10 @@ async function run(k) {
   initializeWebSocket(
     k,
     (message) => {
-      console.log({
-        message,
-      })
-
       switch (message.data?.type) {
         case 'screenshot': {
           takeScreenshot(function(data) {
-            socket.send(JSON.stringify({
+            socket?.send(JSON.stringify({
               type: 'screenshot',
               data: {
                 key: k,
@@ -552,15 +564,15 @@ async function run(k) {
         }
       }
     },
-    (socket) => {
+    (s) => {
       setupDev(function(data) {
         const enrichedData = JSON.stringify({
           ...data,
           key: k,
           location: window.location,
         });
-        console.log(`Sending data: ${enrichedData}`);
-        socket.send(enrichedData);
+
+        s.send(enrichedData);
       });
 
       setupCmdK(function(data) {
@@ -570,8 +582,7 @@ async function run(k) {
           location: window.location,
         });
 
-        console.log(`Sending data: ${enrichedData}`);
-        socket.send(enrichedData);
+        s.send(enrichedData);
       });
     }
   );
@@ -585,6 +596,7 @@ function setupCmdK(cb) {
 
     if (e.composed && e.key === 'k' && e.metaKey) {
       globalTooltips.forEach(t => t.remove());
+      document.querySelectorAll('.__prodex_tooltip').forEach(t => t.remove());
       globalTooltips = [];
 
       var div = newFlex();
@@ -696,7 +708,7 @@ function getReactInfo(node, depth = 0) {
   }
 
   // Vite
-  if (!!node?.child) {
+  if (node?.child) {
     return getReactInfo(node.child, depth + 1);
   }
 
@@ -747,15 +759,18 @@ function setupDev(cb) {
 
     // Remove all boxes
     globalBoxes.forEach(b => b.remove());
+    document.querySelectorAll('.__prodex_box').forEach(b => b.remove());
     globalBoxes = [];
+
+    const rect = ele.getBoundingClientRect();
 
     // Add box for the component
     addBox(
       fiberNode.name,
-      ele.offsetWidth,
-      ele.offsetHeight,
-      ele.offsetTop,
-      ele.offsetLeft,
+      rect.width,
+      rect.height,
+      rect.top + window.scrollY,
+      rect.left + window.scrollX,
       undefined,
       function(input) {
         cb({

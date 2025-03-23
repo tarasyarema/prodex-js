@@ -18,11 +18,12 @@ Simple JS library that let you vibe code to the next level!
 To use, add the following to the head of your HTML file:
 
 ```html
-<script name="prodex" src="http://cdn.jsdelivr.net/gh/tarasyarema/prodex-js@master/core.min.js?k=test"></script>
+<script name="prodex" src="http://cdn.jsdelivr.net/gh/tarasyarema/prodex-js@v0.1.1/core.min.js?k=test"></script>
 ```
 
 if you set the `k` the magic components will be loaded, if you do not set it the magic components will not load (e.g. for production builds).
 
+You can set the `@master` to always get the latest version, or a specific version. But it might be "more" unstable.
 
 ### MCP setup
 
@@ -40,9 +41,11 @@ Add the foloowing to your MCP setup
 
 you can use `sk_test` as the `api_key` for testing purposes.
 
-
 Currently I'm hosting the backend myself, but in the future I might open source / distribute a binary so that you can
 run the MCP locally, as it might be part of a bigger project.
+
+If you are really interested in the backend or can not use the an external service, please let me know via LinkedIn
+and I may give you access / binaries.
 
 ### Disclaimers
 
