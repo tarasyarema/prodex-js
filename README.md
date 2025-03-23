@@ -2,7 +2,7 @@
 
 Simple JS library that let you vibe code to the next level!
 
-<video>
+> Video
 
 ## Features
 
