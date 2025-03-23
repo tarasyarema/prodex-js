@@ -79,6 +79,20 @@ const PRODEX_STYLES = `
 }
 `;
 
+
+function randomString(length) {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return result;
+}
+
+const sessionId = `pd_${randomString(8)}`;
+
 function addStyles() {
   const style = document.createElement('style');
   style.textContent = PRODEX_STYLES;
@@ -99,6 +113,8 @@ window.onload = function() {
   var maybeK = maybeInit();
 
   if (maybeK) {
+    console.log(`ProdEx initialized with key: ${maybeK}`);
+
     addStyles();
     setupControls();
     run(maybeK);
@@ -203,7 +219,7 @@ const setupControls = () => {
 
   addLog(new Date().toISOString(), 'ProdEx initialized');
   addLog(new Date().toISOString(), 'Press `Meta + K` in Magic mode to send page level feedback');
-  addLog(new Date().toISOString(), 'Start an new composer chat (agent) with:\nStart a ProdEx session with id = "test"');
+  addLog(new Date().toISOString(), `Start an new composer chat (agent) with:\nStart a ProdEx session with id = "${sessionId}"`);
 }
 
 
@@ -539,7 +555,6 @@ function addBox(name, width, height, top, left, className, cb) {
 }
 
 async function run(k) {
-  // captureScreen();
   initializeWebSocket(
     k,
     (message) => {
@@ -804,7 +819,16 @@ function initializeWebSocket(
   socket.onopen = function() {
     console.debug(`ProdEx WebSocket connected`);
 
-    socket.send(JSON.stringify({ type: 'js_init', data: { key: k } }));
+    socket.send(
+      JSON.stringify({
+        type: 'js_init',
+        data: {
+          key: k,
+          id: sessionId
+        }
+      })
+    );
+
     send_cb(socket);
   };
 
