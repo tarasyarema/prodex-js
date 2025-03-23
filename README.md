@@ -2,7 +2,9 @@
 
 Simple JS library that let you vibe code to the next level!
 
-> Video
+
+https://github.com/user-attachments/assets/5fc85e16-0a18-4b97-aa6c-e18e6767a407
+
 
 ## Features
 
