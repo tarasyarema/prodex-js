@@ -32,7 +32,7 @@ Add the foloowing to your MCP setup
 {
     "mcpServers": {
         "prodex": {
-            "url": "https://localhost:8001/mcp/sse?api_key=<api_key>"
+            "url": "https://prodex-api.onrender.com/mcp/sse?api_key=sk_test"
         }
     }
 }
