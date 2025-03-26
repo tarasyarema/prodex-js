@@ -9,6 +9,7 @@ var socket = null;
 // const WS_ENDPOINT = 'http://localhost:8001/prodex';
 const WS_ENDPOINT = 'https://prodex-api.onrender.com/prodex';
 
+const Z_INDEX = 2147483640;
 const SERVER_RECONNECT_INTERVAL = 5_000;
 
 // Variables for exponential backoff
@@ -33,7 +34,7 @@ const PRODEX_STYLES = `
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  z-index: 99001;
+  z-index: ${Z_INDEX + 1};
 
   input {
     color: #000;
@@ -52,7 +53,7 @@ const PRODEX_STYLES = `
   border: 1px solid #fff;
   border-radius: 5px;
   cursor: pointer;
-  z-index: 99000;
+  z-index: ${Z_INDEX};
   width: 120px;
   display: block;
   align-items: center;
@@ -61,7 +62,7 @@ const PRODEX_STYLES = `
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99000;
+  z-index: ${Z_INDEX};
 }
 .__prodex_box {
   position: absolute;
@@ -70,7 +71,7 @@ const PRODEX_STYLES = `
   background-color: rgba(255, 0, 0, 0.05);
   cursor: pointer;
   transition: background-color 0.2s, border 0.2s;
-  z-index: 99000;
+  z-index: ${Z_INDEX};
 
   :hover {
     background-color: rgba(255, 0, 0, 0.1);
@@ -143,6 +144,7 @@ const newFlex = (direction = 'row') => {
 const setupControls = () => {
   var controls = newFlex('column');
 
+  controls.style.zIndex = Z_INDEX.toString();
   controls.style.alignItems = 'flex-start';
   controls.style.position = 'fixed';
   controls.style.bottom = '0px';
@@ -427,7 +429,7 @@ function startVideoCapture() {
     img.style.top = '250px';
     img.style.left = '250px';
 
-    img.style.zIndex = '99000';
+    img.style.zIndex = Z_INDEX.toString();
 
     // Set the image size to 25% of the window dimensions
     img.style.width = Math.round(window.innerWidth * 0.5) + 'px';
